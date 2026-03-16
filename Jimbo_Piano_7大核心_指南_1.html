@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>流行鋼琴即興入門 7 大核心 — Jimbo Piano</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+TC:wght@300;400;500;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Variables ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream:      #F7F2E9;
+  --cream-dark: #EDE5D4;
+  --cream-mid:  #E4D9C4;
+  --parchment:  #D9CEBC;
+  --gold:       #B8922A;
+  --gold-light: #D4AC4A;
+  --gold-pale:  #EDD98A;
+  --gold-glow:  rgba(184,146,42,0.15);
+  --brown-dark: #2C1F0E;
+  --brown-mid:  #5C3D1E;
+  --brown-soft: #8B6442;
+  --brown-mute: #A08060;
+  --blue-grey:  #4A5E72;
+  --blue-card:  #E8EDF3;
+  --blue-card2: #DAE3EE;
+  --red-accent: #8B2020;
+  --ink:        #1A1208;
+  --shadow-gold: 0 4px 24px rgba(184,146,42,0.18);
+  --shadow-soft: 0 2px 16px rgba(44,31,14,0.10);
+  --ff-display: 'Playfair Display', 'Noto Serif TC', serif;
+  --ff-body:    'Cormorant Garamond', 'Noto Serif TC', serif;
+  --ff-sans:    'Noto Sans TC', sans-serif;
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  background: var(--cream);
+  color: var(--brown-dark);
+  font-family: var(--ff-body);
+  font-size: 1.05rem;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Print ─────────────────────────────────────────────────────── */
+@media print {
+  .no-print { display: none !important; }
+  body { font-size: 10pt; background: white; }
+  .cover { min-height: auto; page-break-after: always; }
+  .core-section { page-break-inside: avoid; }
+  .page-nav { display: none; }
+}
+
+/* ── Noise texture overlay ─────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ── Navigation ────────────────────────────────────────────────── */
+.page-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(247,242,233,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--parchment);
+  padding: 0 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px;
+  transition: box-shadow 0.3s;
+}
+.page-nav.scrolled { box-shadow: var(--shadow-soft); }
+.nav-brand {
+  font-family: var(--ff-display);
+  font-size: 0.95rem; font-weight: 700;
+  color: var(--gold); letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.nav-links {
+  display: flex; gap: 0.2rem;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--ff-sans);
+  font-size: 0.72rem; font-weight: 500;
+  color: var(--brown-soft); text-decoration: none;
+  padding: 0.3rem 0.6rem; border-radius: 4px;
+  transition: all 0.2s; letter-spacing: 0.04em;
+}
+.nav-links a:hover { background: var(--gold-glow); color: var(--gold); }
+
+/* ── Cover ─────────────────────────────────────────────────────── */
+.cover {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 5rem 2rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 20%, rgba(184,146,42,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 80% at 80% 80%, rgba(74,94,114,0.06) 0%, transparent 60%),
+    linear-gradient(160deg, #F7F2E9 0%, #EDE5D4 50%, #E4D9C4 100%);
+}
+
+/* Decorative piano keys top */
+.cover-keys {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--gold) 0px, var(--gold) 1px,
+    transparent 1px, transparent 18px
+  );
+}
+
+/* Decorative arcs */
+.cover-arc {
+  position: absolute;
+  border: 1px solid rgba(184,146,42,0.15);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.cover-arc-1 { width: 600px; height: 600px; top: -200px; right: -200px; }
+.cover-arc-2 { width: 400px; height: 400px; bottom: -100px; left: -100px; }
+
+.cover-inner {
+  position: relative; z-index: 1;
+  text-align: center;
+  max-width: 780px;
+  animation: fadeUp 1.2s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cover-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: var(--gold); color: white;
+  font-family: var(--ff-sans); font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 0.35rem 1.2rem; border-radius: 2rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 2px 12px rgba(184,146,42,0.35);
+}
+
+.cover-eyebrow {
+  font-family: var(--ff-sans);
+  font-size: 0.8rem; font-weight: 500;
+  color: var(--brown-soft); letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  animation: fadeUp 1.2s 0.1s ease both;
+}
+
+.cover-title {
+  font-family: var(--ff-display);
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  font-weight: 900; line-height: 1.1;
+  color: var(--brown-dark);
+  margin-bottom: 0.5rem;
+  animation: fadeUp 1.2s 0.2s ease both;
+}
+
+.cover-title span {
+  display: block;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.cover-subtitle {
+  font-family: var(--ff-display);
+  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+  font-weight: 400; font-style: italic;
+  color: var(--brown-soft);
+  margin-bottom: 2.5rem;
+  animation: fadeUp 1.2s 0.3s ease both;
+}
+
+.cover-divider {
+  width: 80px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0 auto 2.5rem;
+  animation: fadeUp 1.2s 0.4s ease both;
+}
+
+.cover-desc {
+  font-size: 1.1rem; color: var(--brown-soft);
+  max-width: 520px; margin: 0 auto 3rem;
+  line-height: 1.8;
+  animation: fadeUp 1.2s 0.5s ease both;
+}
+
+/* TOC Grid */
+.toc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-top: 2rem;
+  animation: fadeUp 1.2s 0.6s ease both;
+}
+
+.toc-item {
+  display: flex; align-items: center; gap: 0.8rem;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid var(--cream-mid);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  transition: all 0.25s;
+  text-align: left;
+}
+.toc-item:hover {
+  background: white;
+  border-color: var(--gold-light);
+  box-shadow: var(--shadow-gold);
+  transform: translateY(-2px);
+}
+.toc-num {
+  font-family: var(--ff-display);
+  font-size: 1.4rem; font-weight: 900;
+  color: var(--gold-light); line-height: 1;
+  min-width: 2rem;
+}
+.toc-text {
+  font-family: var(--ff-sans);
+  font-size: 0.78rem; font-weight: 500;
+  color: var(--brown-mid); line-height: 1.35;
+}
+
+/* Piano keys decoration */
+.piano-keys {
+  display: flex; justify-content: center;
+  gap: 2px; margin: 2.5rem 0;
+  animation: fadeUp 1.2s 0.7s ease both;
+}
+.wkey {
+  width: 22px; height: 64px;
+  background: white;
+  border: 1px solid var(--cream-mid);
+  border-radius: 0 0 4px 4px;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.bkey {
+  width: 14px; height: 40px;
+  background: var(--brown-dark);
+  border-radius: 0 0 3px 3px;
+  margin-left: -7px; margin-right: -7px;
+  position: relative; z-index: 2;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+}
+
+/* ── Main Wrapper ───────────────────────────────────────────────── */
+.main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 4rem 2rem 6rem;
+  position: relative; z-index: 1;
+}
+
+/* ── Section intro ─────────────────────────────────────────────── */
+.section-intro {
+  text-align: center;
+  padding: 3rem 0 1rem;
+  margin-bottom: 1rem;
+}
+.section-intro h2 {
+  font-family: var(--ff-display);
+  font-size: 1rem; font-weight: 400; font-style: italic;
+  color: var(--brown-soft); letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+/* ── Chapter headers ───────────────────────────────────────────── */
+.core-section {
+  margin-bottom: 5rem;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.core-section.visible { opacity: 1; transform: translateY(0); }
+
+.ch-header {
+  display: flex; align-items: stretch;
+  margin-bottom: 2rem;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+.ch-num-block {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  color: white;
+  font-family: var(--ff-display);
+  font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  padding: 1.5rem 0.9rem;
+  display: flex; align-items: center; justify-content: center;
+  min-width: 52px;
+}
+.ch-title-block {
+  background: var(--cream-dark);
+  padding: 1.5rem 2rem;
+  border-left: none;
+  flex: 1;
+}
+.ch-en {
+  font-family: var(--ff-sans);
+  font-size: 0.72rem; font-weight: 500;
+  color: var(--brown-soft); letter-spacing: 0.2em;
+  text-transform: uppercase; margin-bottom: 0.4rem;
+}
+.ch-title-block h2 {
+  font-family: var(--ff-display);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700; line-height: 1.2;
+  color: var(--brown-dark);
+}
+
+/* ── Section headings ───────────────────────────────────────────── */
+.sh {
+  font-family: var(--ff-display);
+  font-size: 1.15rem; font-weight: 700;
+  color: var(--brown-mid);
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--cream-mid);
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.sh::before {
+  content: '';
+  display: block; width: 4px; height: 1.2em;
+  background: var(--gold);
+  border-radius: 2px;
+}
+
+/* ── Body text ─────────────────────────────────────────────────── */
+p { margin-bottom: 1rem; color: var(--brown-mid); }
+
+/* ── Gold quote ─────────────────────────────────────────────────── */
+.gold-quote {
+  text-align: center;
+  font-family: var(--ff-display);
+  font-size: 1.25rem; font-style: italic;
+  color: var(--gold);
+  padding: 1.5rem 2rem;
+  border-top: 1px solid var(--gold-pale);
+  border-bottom: 1px solid var(--gold-pale);
+  margin: 2rem 0;
+}
+
+/* ── Tip box ────────────────────────────────────────────────────── */
+.tip-box {
+  background: linear-gradient(135deg, rgba(184,146,42,0.06) 0%, rgba(184,146,42,0.02) 100%);
+  border: 1px solid var(--gold-pale);
+  border-left: 4px solid var(--gold);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+}
+.tip-box-title {
+  font-family: var(--ff-display);
+  font-size: 0.95rem; font-weight: 700;
+  color: var(--gold); margin-bottom: 0.5rem;
+}
+.tip-box p { color: var(--brown-mid); margin: 0; }
+
+/* ── Chord cards ─────────────────────────────────────────────────── */
+.chord-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  border: 1px solid var(--parchment);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  margin: 1.2rem 0;
+}
+.chord-card {
+  background: var(--blue-card);
+  padding: 1.2rem 1rem;
+  text-align: center;
+  transition: background 0.2s;
+  border-right: 1px solid var(--parchment);
+}
+.chord-card:last-child { border-right: none; }
+.chord-card:hover { background: var(--blue-card2); }
+.chord-name {
+  font-family: var(--ff-display);
+  font-size: 1rem; font-weight: 700;
+  color: var(--blue-grey); margin-bottom: 0.4rem;
+}
+.chord-formula {
+  font-family: var(--ff-sans);
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--brown-dark); margin-bottom: 0.4rem;
+  letter-spacing: 0.05em;
+}
+.chord-mood {
+  font-family: var(--ff-body);
+  font-size: 0.82rem; font-style: italic;
+  color: var(--brown-soft);
+}
+
+/* ── Tables ─────────────────────────────────────────────────────── */
+.data-table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.2rem 0;
+  border-radius: 10px; overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  font-size: 0.9rem;
+}
+.data-table th {
+  background: var(--brown-mid);
+  color: white;
+  font-family: var(--ff-sans); font-weight: 600;
+  font-size: 0.78rem; letter-spacing: 0.08em;
+  padding: 0.9rem 1.2rem; text-align: left;
+}
+.data-table td {
+  padding: 0.85rem 1.2rem;
+  border-bottom: 1px solid var(--cream-mid);
+  vertical-align: top;
+  color: var(--brown-mid);
+  font-family: var(--ff-body);
+  line-height: 1.5;
+}
+.data-table tr:nth-child(even) td { background: var(--cream-dark); }
+.data-table tr:nth-child(odd) td { background: var(--cream); }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: rgba(184,146,42,0.05); }
+.data-table .highlight { font-weight: 600; color: var(--gold); font-family: var(--ff-display); }
+
+/* ── Progression cards ───────────────────────────────────────────── */
+.prog-card {
+  border: 1px solid var(--cream-mid);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0.8rem 0;
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow 0.25s, transform 0.25s;
+}
+.prog-card:hover {
+  box-shadow: var(--shadow-gold);
+  transform: translateY(-2px);
+}
+.prog-card.featured {
+  border-color: var(--gold-pale);
+  box-shadow: var(--shadow-gold);
+}
+.prog-card-label {
+  background: var(--cream-dark);
+  padding: 0.7rem 1.2rem;
+  font-family: var(--ff-sans); font-size: 0.75rem; font-weight: 600;
+  color: var(--brown-soft); letter-spacing: 0.1em; text-transform: uppercase;
+  border-bottom: 1px solid var(--cream-mid);
+}
+.prog-card.featured .prog-card-label {
+  background: linear-gradient(90deg, rgba(184,146,42,0.12), rgba(184,146,42,0.04));
+  color: var(--gold);
+}
+.prog-card-chords {
+  background: white;
+  padding: 1rem 1.5rem;
+  font-family: var(--ff-display);
+  font-size: 1.5rem; font-weight: 700;
+  color: var(--brown-dark); letter-spacing: 0.05em;
+}
+.prog-card-desc {
+  background: var(--cream);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.88rem; color: var(--brown-soft);
+  font-style: italic;
+  border-top: 1px solid var(--cream-mid);
+}
+
+/* Emotion table */
+.emotion-table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.2rem 0; border-radius: 10px; overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+.emotion-table th {
+  background: var(--brown-mid); color: white;
+  font-family: var(--ff-sans); font-size: 0.78rem; font-weight: 600;
+  letter-spacing: 0.08em; padding: 0.9rem 1.2rem; text-align: left;
+}
+.emotion-table td {
+  padding: 0.85rem 1.2rem; border-bottom: 1px solid var(--cream-mid);
+  vertical-align: middle; font-family: var(--ff-body);
+}
+.emotion-table tr:nth-child(even) td { background: var(--cream-dark); }
+.emotion-table tr:nth-child(odd) td { background: var(--cream); }
+.emotion-table tr:last-child td { border-bottom: none; }
+.emotion-style { font-weight: 600; color: var(--brown-dark); font-family: var(--ff-display); font-size: 1rem; }
+.emotion-prog { font-family: var(--ff-sans); font-size: 0.88rem; font-weight: 600; color: var(--gold); }
+.emotion-eg { font-size: 0.85rem; color: var(--brown-soft); font-style: italic; }
+
+/* ── Step rows ───────────────────────────────────────────────────── */
+.step-row {
+  display: flex; align-items: stretch;
+  border: 1px solid var(--cream-mid);
+  border-radius: 8px; overflow: hidden;
+  margin: 0.6rem 0;
+  box-shadow: var(--shadow-soft);
+}
+.step-num {
+  background: var(--cream-dark);
+  color: var(--gold);
+  font-family: var(--ff-display); font-size: 1.6rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  min-width: 56px; padding: 1rem;
+  border-right: 1px solid var(--cream-mid);
+}
+.step-content {
+  flex: 1; padding: 1rem 1.3rem;
+  background: var(--cream);
+}
+.step-title {
+  font-family: var(--ff-display); font-size: 1rem; font-weight: 700;
+  color: var(--brown-dark); margin-bottom: 0.3rem;
+}
+.step-desc {
+  font-size: 0.9rem; color: var(--brown-soft); line-height: 1.6;
+}
+
+/* ── Technique boxes ─────────────────────────────────────────────── */
+.technique-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1rem; margin: 1.2rem 0;
+}
+@media (max-width: 600px) { .technique-grid { grid-template-columns: 1fr; } }
+
+.tech-box {
+  border: 1px solid var(--cream-mid);
+  border-radius: 10px; overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+.tech-box-label {
+  background: var(--cream-dark); padding: 0.65rem 1rem;
+  font-family: var(--ff-sans); font-size: 0.72rem; font-weight: 700;
+  color: var(--brown-soft); letter-spacing: 0.12em; text-transform: uppercase;
+  border-bottom: 1px solid var(--cream-mid);
+}
+.tech-box-body {
+  background: white; padding: 1rem 1.1rem;
+  font-size: 0.9rem; color: var(--brown-mid); line-height: 1.6;
+}
+.tech-formula {
+  text-align: center; margin-top: 0.7rem;
+  font-family: var(--ff-display); font-size: 1.3rem; font-weight: 700;
+  color: var(--gold);
+}
+
+/* ── 30-day plan ─────────────────────────────────────────────────── */
+.week-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 1rem; margin: 1.2rem 0;
+}
+@media (max-width: 600px) { .week-grid { grid-template-columns: 1fr; } }
+
+.week-card {
+  border: 1px solid var(--cream-mid);
+  border-radius: 10px; overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow 0.25s, transform 0.25s;
+}
+.week-card:hover { box-shadow: var(--shadow-gold); transform: translateY(-2px); }
+.week-header {
+  padding: 1rem 1.2rem;
+  display: flex; align-items: center; gap: 0.8rem;
+}
+.week-card:nth-child(1) .week-header { background: linear-gradient(135deg, #EDE5D4, #E4D9C4); }
+.week-card:nth-child(2) .week-header { background: linear-gradient(135deg, #E8EDF3, #DAE3EE); }
+.week-card:nth-child(3) .week-header { background: linear-gradient(135deg, #EDE5D4, #E8EDF3); }
+.week-card:nth-child(4) .week-header { background: linear-gradient(135deg, rgba(184,146,42,0.12), rgba(184,146,42,0.04)); }
+.week-num {
+  font-family: var(--ff-display); font-size: 2rem; font-weight: 900;
+  color: var(--gold); line-height: 1;
+}
+.week-meta { flex: 1; }
+.week-label {
+  font-family: var(--ff-sans); font-size: 0.68rem; font-weight: 700;
+  color: var(--brown-soft); letter-spacing: 0.18em; text-transform: uppercase;
+}
+.week-theme {
+  font-family: var(--ff-display); font-size: 1.05rem; font-weight: 700;
+  color: var(--brown-dark);
+}
+.week-body {
+  background: var(--cream); padding: 1rem 1.2rem;
+  border-top: 1px solid var(--cream-mid);
+}
+.week-items { list-style: none; }
+.week-items li {
+  font-family: var(--ff-sans); font-size: 0.83rem; color: var(--brown-mid);
+  padding: 0.3rem 0; border-bottom: 1px solid var(--cream-mid);
+  display: flex; align-items: flex-start; gap: 0.5rem;
+}
+.week-items li:last-child { border-bottom: none; }
+.week-items li::before {
+  content: '✦'; color: var(--gold-light); font-size: 0.7rem;
+  margin-top: 0.15rem; flex-shrink: 0;
+}
+.week-goal {
+  margin-top: 0.75rem; padding: 0.6rem 0.8rem;
+  background: rgba(184,146,42,0.08); border-radius: 6px;
+  font-family: var(--ff-body); font-size: 0.85rem; font-style: italic;
+  color: var(--gold);
+}
+
+/* Daily structure */
+.daily-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0; border: 1px solid var(--cream-mid);
+  border-radius: 10px; overflow: hidden;
+  box-shadow: var(--shadow-soft); margin: 1.2rem 0;
+}
+@media (max-width: 600px) { .daily-grid { grid-template-columns: repeat(2, 1fr); } }
+.daily-cell {
+  padding: 1.2rem 1rem; text-align: center;
+  border-right: 1px solid var(--cream-mid);
+  transition: background 0.2s;
+}
+.daily-cell:last-child { border-right: none; }
+.daily-cell:hover { background: var(--gold-glow); }
+.daily-time {
+  font-family: var(--ff-display); font-size: 1.4rem; font-weight: 900;
+  color: var(--gold); margin-bottom: 0.3rem;
+}
+.daily-label {
+  font-family: var(--ff-sans); font-size: 0.75rem; font-weight: 700;
+  color: var(--brown-dark); margin-bottom: 0.4rem; letter-spacing: 0.05em;
+}
+.daily-desc {
+  font-family: var(--ff-body); font-size: 0.8rem; font-style: italic;
+  color: var(--brown-soft); line-height: 1.4;
+}
+.daily-cell:nth-child(1) { background: rgba(184,146,42,0.05); }
+.daily-cell:nth-child(4) { background: rgba(74,94,114,0.05); }
+
+/* ── Highlight text ─────────────────────────────────────────────── */
+.hl { color: var(--gold); font-weight: 600; }
+.hl-blue { color: var(--blue-grey); font-weight: 600; }
+
+/* ── CTA Section ────────────────────────────────────────────────── */
+.cta-section {
+  text-align: center;
+  padding: 5rem 2rem;
+  background: linear-gradient(160deg, var(--brown-dark) 0%, #4A3020 100%);
+  margin: 4rem -2rem -6rem;
+  position: relative; overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    90deg, rgba(184,146,42,0.04) 0px, rgba(184,146,42,0.04) 1px, transparent 1px, transparent 40px
+  ), repeating-linear-gradient(
+    0deg, rgba(184,146,42,0.04) 0px, rgba(184,146,42,0.04) 1px, transparent 1px, transparent 40px
+  );
+}
+.cta-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+.cta-eyebrow {
+  font-family: var(--ff-sans); font-size: 0.72rem; font-weight: 700;
+  color: var(--gold-pale); letter-spacing: 0.25em; text-transform: uppercase;
+  margin-bottom: 1.2rem;
+}
+.cta-title {
+  font-family: var(--ff-display);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900; color: white; line-height: 1.2;
+  margin-bottom: 1rem;
+}
+.cta-desc {
+  font-family: var(--ff-body); font-size: 1.05rem;
+  color: rgba(255,255,255,0.65); line-height: 1.8;
+  margin-bottom: 2.5rem;
+}
+.cta-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  color: var(--brown-dark); text-decoration: none;
+  font-family: var(--ff-sans); font-size: 0.9rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 1.1rem 2.8rem; border-radius: 3px;
+  box-shadow: 0 4px 20px rgba(184,146,42,0.4);
+  transition: all 0.3s;
+  position: relative; overflow: hidden;
+}
+.cta-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,0.15);
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+}
+.cta-btn:hover::before { transform: translateX(0); }
+.cta-btn:hover {
+  box-shadow: 0 6px 28px rgba(184,146,42,0.55);
+  transform: translateY(-2px);
+}
+.cta-url {
+  margin-top: 1.5rem;
+  font-family: var(--ff-sans); font-size: 0.8rem;
+  color: rgba(255,255,255,0.4); letter-spacing: 0.1em;
+}
+
+/* ── Footer strip ───────────────────────────────────────────────── */
+.footer-strip {
+  background: var(--ink);
+  color: rgba(255,255,255,0.35);
+  text-align: center; padding: 1.2rem;
+  font-family: var(--ff-sans); font-size: 0.72rem; letter-spacing: 0.1em;
+}
+.footer-strip a { color: var(--gold-light); text-decoration: none; }
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .nav-links { display: none; }
+  .ch-num-block { writing-mode: horizontal-tb; min-width: auto; padding: 0.7rem 1rem; font-size: 0.65rem; }
+  .ch-title-block { padding: 1rem 1.2rem; }
+  .ch-title-block h2 { font-size: 1.3rem; }
+  .main { padding: 3rem 1.2rem 4rem; }
+}
+
+/* ── Scroll reveal ──────────────────────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.65s ease, transform 0.65s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── Back to top ────────────────────────────────────────────────── */
+.back-top {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 50;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--gold); color: white; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; box-shadow: 0 3px 16px rgba(184,146,42,0.4);
+  transition: all 0.3s; opacity: 0; pointer-events: none;
+}
+.back-top.show { opacity: 1; pointer-events: auto; }
+.back-top:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(184,146,42,0.5); }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="page-nav no-print" id="nav">
+  <div class="nav-brand">Jimbo Piano</div>
+  <ul class="nav-links">
+    <li><a href="#core1">和弦指型</a></li>
+    <li><a href="#core2">延伸和弦</a></li>
+    <li><a href="#core3">和弦進行</a></li>
+    <li><a href="#core4">左右手協調</a></li>
+    <li><a href="#core5">旋律加花</a></li>
+    <li><a href="#core6">音色踏板</a></li>
+    <li><a href="#core7">練習計劃</a></li>
+  </ul>
+</nav>
+
+<!-- ── COVER ──────────────────────────────────────────────────────── -->
+<section class="cover">
+  <div class="cover-bg"></div>
+  <div class="cover-keys"></div>
+  <div class="cover-arc cover-arc-1"></div>
+  <div class="cover-arc cover-arc-2"></div>
+
+  <div class="cover-inner">
+    <div class="cover-badge">✦ 完全免費 ✦</div>
+    <p class="cover-eyebrow">Jimbo Piano 免費指南</p>
+    <h1 class="cover-title">
+      流行鋼琴即興入門
+      <span>7 大核心</span>
+    </h1>
+    <p class="cover-subtitle">從「照譜演奏」到「隨心即興」的完整路線圖</p>
+    <div class="cover-divider"></div>
+    <p class="cover-desc">無論你是完全零基礎，還是已有些基礎想更上一層，這份指南將給你一個清晰起點，讓練琴不再迷茫。</p>
+
+    <!-- Piano keys deco -->
+    <div class="piano-keys">
+      <div class="wkey"></div><div class="bkey"></div>
+      <div class="wkey"></div><div class="bkey"></div>
+      <div class="wkey"></div>
+      <div class="wkey"></div><div class="bkey"></div>
+      <div class="wkey"></div><div class="bkey"></div>
+      <div class="wkey"></div><div class="bkey"></div>
+      <div class="wkey"></div>
+      <div class="wkey"></div><div class="bkey"></div>
+      <div class="wkey"></div>
+    </div>
+
+    <!-- TOC -->
+    <div class="toc-grid">
+      <a href="#core1" class="toc-item"><span class="toc-num">01</span><span class="toc-text">和弦基礎與專業指型</span></a>
+      <a href="#core2" class="toc-item"><span class="toc-num">02</span><span class="toc-text">延伸和弦與色彩音</span></a>
+      <a href="#core3" class="toc-item"><span class="toc-num">03</span><span class="toc-text">和弦進行的萬能公式</span></a>
+      <a href="#core4" class="toc-item"><span class="toc-num">04</span><span class="toc-text">左右手協調與伴奏技巧</span></a>
+      <a href="#core5" class="toc-item"><span class="toc-num">05</span><span class="toc-text">即興填補與旋律加花</span></a>
+      <a href="#core6" class="toc-item"><span class="toc-num">06</span><span class="toc-text">音色處理與踏板深度應用</span></a>
+      <a href="#core7" class="toc-item"><span class="toc-num">07</span><span class="toc-text">30 天每日練習計劃</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ── MAIN CONTENT ────────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- INTRO -->
+  <div class="section-intro reveal">
+    <h2>序言 · Introduction</h2>
+    <p style="max-width:560px;margin:0 auto;color:var(--brown-soft);font-size:1.05rem;">歡迎來到 Jimbo Piano。即興有一套清晰的邏輯和方法，任何人都可以學。這 7 個核心，將帶你用 30 天從「看譜彈」進步到「隨心彈」。</p>
+  </div>
+
+  <!-- ── CORE 1 ──────────────────────────────────────────────────── -->
+  <section class="core-section" id="core1">
+    <div class="ch-header">
+      <div class="ch-num-block">Core 01</div>
+      <div class="ch-title-block">
+        <p class="ch-en">Triads & Fingerings</p>
+        <h2>和弦基礎與專業指型</h2>
+      </div>
+    </div>
+
+    <p>即興的起點是「手感」。讀者需要知道的不只是和弦組成音，還有最科學的指法。記住這四大基礎三和弦公式，是所有即興的地基。</p>
+
+    <div class="sh">四大基礎三和弦公式</div>
+    <div class="chord-grid">
+      <div class="chord-card">
+        <div class="chord-name">大三和弦<br><small>Major</small></div>
+        <div class="chord-formula">1 — 3 — 5</div>
+        <div class="chord-mood">明亮、穩定</div>
+      </div>
+      <div class="chord-card">
+        <div class="chord-name">小三和弦<br><small>Minor</small></div>
+        <div class="chord-formula">1 — ♭3 — 5</div>
+        <div class="chord-mood">憂鬱、柔和</div>
+      </div>
+      <div class="chord-card">
+        <div class="chord-name">減三和弦<br><small>Diminished</small></div>
+        <div class="chord-formula">1 — ♭3 — ♭5</div>
+        <div class="chord-mood">緊張、不和諧</div>
+      </div>
+      <div class="chord-card">
+        <div class="chord-name">增三和弦<br><small>Augmented</small></div>
+        <div class="chord-formula">1 — 3 — ♯5</div>
+        <div class="chord-mood">擴張、夢幻</div>
+      </div>
+    </div>
+
+    <div class="sh">專業轉位指法 Inversions</div>
+    <p>轉位不只是理論——它讓換和弦更流暢，讓手型更自然。以下是右手三種轉位的建議指法：</p>
+    <table class="data-table reveal">
+      <thead><tr><th>轉位</th><th>右手建議指法</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><span class="highlight">原位 Root</span></td><td>1 — 3 — 5</td><td>最基礎，手型自然，適合初學</td></tr>
+        <tr><td><span class="highlight">第一轉位 1st Inv.</span></td><td>1 — 2 — 5</td><td>讓手掌張開度更自然，換和弦更流暢</td></tr>
+        <tr><td><span class="highlight">第二轉位 2nd Inv.</span></td><td>1 — 3 — 5</td><td>常用於 I–IV 進行中的低音線條</td></tr>
+      </tbody>
+    </table>
+
+    <div class="tip-box reveal">
+      <div class="tip-box-title">💡 專業撇步：指位記憶法</div>
+      <p>記住：1 = 拇指，2 = 食指，3 = 中指，4 = 無名指，5 = 小指。在第一轉位（1-2-5）中，食指和小指之間的張開距離，讓和弦過渡時手型更自然，是職業鋼琴手最常用的祕訣！</p>
+    </div>
+  </section>
+
+  <!-- ── CORE 2 ──────────────────────────────────────────────────── -->
+  <section class="core-section" id="core2">
+    <div class="ch-header">
+      <div class="ch-num-block">Core 02</div>
+      <div class="ch-title-block">
+        <p class="ch-en">Extended Chords</p>
+        <h2>延伸和弦與色彩音</h2>
+      </div>
+    </div>
+
+    <p>流行音樂之所以好聽，是因為多了 <span class="hl">7、9、sus</span> 這些「色彩音」。學會這些延伸和弦，你的和聲會立刻從業餘感升級到專業感。</p>
+
+    <div class="sh">掛留和弦 Suspended Chords</div>
+    <div class="chord-grid" style="grid-template-columns: 1fr 1fr;">
+      <div class="chord-card">
+        <div class="chord-name">Sus4</div>
+        <div class="chord-formula">1 — 4 — 5</div>
+        <div class="chord-mood">回歸主和弦前的<br>懸念感</div>
+      </div>
+      <div class="chord-card">
+        <div class="chord-name">Sus2</div>
+        <div class="chord-formula">1 — 2 — 5</div>
+        <div class="chord-mood">流行樂最常用的<br>空靈感來源</div>
+      </div>
+    </div>
+
+    <div class="sh">七和弦 7th Chords</div>
+    <div class="chord-grid" style="grid-template-columns: repeat(3,1fr);">
+      <div class="chord-card">
+        <div class="chord-name">Major 7<br><small>(Maj7)</small></div>
+        <div class="chord-formula">1·3·5·7</div>
+        <div class="chord-mood">都市感、高級感</div>
+      </div>
+      <div class="chord-card">
+        <div class="chord-name">Dominant 7<br><small>(7th)</small></div>
+        <div class="chord-formula">1·3·5·♭7</div>
+        <div class="chord-mood">強烈的導向性</div>
+      </div>
+      <div class="chord-card">
+        <div class="chord-name">Minor 7<br><small>(m7)</small></div>
+        <div class="chord-formula">1·♭3·5·♭7</div>
+        <div class="chord-mood">憂鬱但富有深度</div>
+      </div>
+    </div>
+
+    <div class="sh">加九和弦 Add9 ——「靈魂和弦」</div>
+    <div class="prog-card featured reveal">
+      <div class="prog-card-label">⭐ 流行鋼琴的靈魂：Add9</div>
+      <div class="prog-card-chords">1 — 3 — 5 — 9</div>
+      <div class="prog-card-desc">讓簡單的和弦瞬間變得專業。在 C 大三和弦加入 D 音（即 9 度音），原本的 C-E-G 變成了 C-E-G-D，立刻產生一種現代流行感和空間感。</div>
+    </div>
+
+    <div class="tip-box reveal">
+      <div class="tip-box-title">🎹 Jimbo 實作練習</div>
+      <p>試試把 Cmaj7 和 Cadd9 交替彈奏——你會發現兩者的情緒完全不同。Cmaj7 帶來「都市感」，Cadd9 帶來「開闊的空間感」。這就是色彩音的魔法！</p>
+    </div>
+  </section>
+
+  <!-- ── CORE 3 ──────────────────────────────────────────────────── -->
+  <section class="core-section" id="core3">
+    <div class="ch-header">
+      <div class="ch-num-block">Core 03</div>
+      <div class="ch-title-block">
+        <p class="ch-en">Chord Progressions</p>
+        <h2>和弦進行的萬能公式</h2>
+      </div>
+    </div>
+
+    <p>流行音樂中有幾個「萬能進行」幾乎出現在無數金曲裡。選擇你想要表達的情緒，套用對應的和弦公式。</p>
+
+    <div class="sh">情感對照表</div>
+    <table class="emotion-table reveal">
+      <thead>
+        <tr><th>風格 / 情感</th><th>和弦進行公式（以 C 大調為例）</th><th>經典範例</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="emotion-style">經典萬用</span></td>
+          <td><span class="emotion-prog">I – VI – IV – V<br>C – Am – F – G</span></td>
+          <td><span class="emotion-eg">50 年代經典、無數流行歌</span></td>
+        </tr>
+        <tr>
+          <td><span class="emotion-style">卡農進行</span></td>
+          <td><span class="emotion-prog">I – V – VI – III – IV – I – IV – V</span></td>
+          <td><span class="emotion-eg">《卡農》、《那些年》</span></td>
+        </tr>
+        <tr>
+          <td><span class="emotion-style">日韓/華語情歌</span></td>
+          <td><span class="emotion-prog">IV – V – III – VI<br>F – G – Em – Am</span></td>
+          <td><span class="emotion-eg">4536 進行，極具煽情效果</span></td>
+        </tr>
+        <tr>
+          <td><span class="emotion-style">爵士/流暢感</span></td>
+          <td><span class="emotion-prog">II – V – I<br>Dm7 – G7 – Cmaj7</span></td>
+          <td><span class="emotion-eg">所有樂理的終點，最完美的解決</span></td>
+        </tr>
+        <tr>
+          <td><span class="emotion-style">悲傷/電影感</span></td>
+          <td><span class="emotion-prog">VI – IV – I – V<br>Am – F – C – G</span></td>
+          <td><span class="emotion-eg">很多現代流行抒情、搖滾</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="sh">重點進行深入解析</div>
+
+    <div class="prog-card featured reveal">
+      <div class="prog-card-label">⭐ 最萬能：I – V – vi – IV（覆蓋 80% 流行金曲）</div>
+      <div class="prog-card-chords">C → G → Am → F</div>
+      <div class="prog-card-desc">從鄧麗君到 Taylor Swift，都用這個進行。行動：用右手單手，每個和弦彈 4 拍，循環 4 次，直到流暢為止。</div>
+    </div>
+
+    <div class="prog-card reveal" style="margin-top:0.8rem;">
+      <div class="prog-card-label">🔥 最煽情：4536251 萬能煽情公式</div>
+      <div class="prog-card-chords">F → G → Em → Am → Dm → G → C</div>
+      <div class="prog-card-desc">電視劇情感高潮、KTV 必殺技。掌握這個，你可以讓聽眾瞬間起雞皮疙瘩。</div>
+    </div>
+  </section>
+
+  <!-- ── CORE 4 ──────────────────────────────────────────────────── -->
+  <section class="core-section" id="core4">
+    <div class="ch-header">
+      <div class="ch-num-block">Core 04</div>
+      <div class="ch-title-block">
+        <p class="ch-en">Comping Styles</p>
+        <h2>左右手協調與伴奏技巧</h2>
+      </div>
+    </div>
+
+    <p>不要只是彈下去，要讓鋼琴「動起來」。左手是地基，右手是裝飾。兩手的協調不是靠「同時練」，而是靠「分別熟練後再合」。</p>
+
+    <div class="sh">左手：基石模式</div>
+    <table class="data-table reveal">
+      <thead><tr><th>模式</th><th>說明</th><th>音程</th><th>適合場景</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="highlight">八度音 Octaves</span></td>
+          <td>增加厚度與份量感</td>
+          <td>C1 – C2</td>
+          <td>副歌高潮、強奏段落</td>
+        </tr>
+        <tr>
+          <td><span class="highlight">1-5-8 模式</span></td>
+          <td>流行樂最常用的支撐模式</td>
+          <td>C1 – G1 – C2</td>
+          <td>主歌、輕鬆流暢段落</td>
+        </tr>
+        <tr>
+          <td><span class="highlight">1-5-10 模式</span></td>
+          <td>更有張力的開闊音程 Voicing</td>
+          <td>C1 – G1 – E2</td>
+          <td>抒情副歌、情感豐富段落</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="sh">右手：節奏裝飾模式</div>
+    <table class="data-table reveal">
+      <thead><tr><th>技巧</th><th>彈法說明</th><th>節奏感</th><th>難度</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="highlight">柱狀和弦 Block</span></td>
+          <td>整齊敲擊，強調節拍</td>
+          <td>強、明確</td>
+          <td>★☆☆</td>
+        </tr>
+        <tr>
+          <td><span class="highlight">切分音 Syncopation</span></td>
+          <td>在半拍處切入，產生律動感</td>
+          <td>靈活、彈跳</td>
+          <td>★★☆</td>
+        </tr>
+        <tr>
+          <td><span class="highlight">琶音 Arpeggio</span></td>
+          <td>像流水一樣分解和弦，用於副歌前鋪陳</td>
+          <td>流動、優美</td>
+          <td>★★☆</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="sh">左右手協調：三步法</div>
+    <div class="step-row reveal">
+      <div class="step-num">①</div>
+      <div class="step-content">
+        <div class="step-title">單手熟練</div>
+        <div class="step-desc">先單獨練好左手（和弦換奏流暢）；再單獨練好右手旋律。兩手都熟才合。</div>
+      </div>
+    </div>
+    <div class="step-row reveal">
+      <div class="step-num">②</div>
+      <div class="step-content">
+        <div class="step-title">慢速合手</div>
+        <div class="step-desc">用 BPM 50–60 把兩手合在一起，允許停頓，先求正確不求快速。</div>
+      </div>
+    </div>
+    <div class="step-row reveal">
+      <div class="step-num">③</div>
+      <div class="step-content">
+        <div class="step-title">逐步加速</div>
+        <div class="step-desc">每次成功後節拍器加 5 BPM，直到達到原曲速度。</div>
+      </div>
+    </div>
+
+    <div class="tip-box reveal">
+      <div class="tip-box-title">💡 Jimbo 秘訣</div>
+      <p>慢到你覺得「這也太慢了吧」——那才是正確的練習速度。大部分人合手失敗，不是因為不夠聰明，是因為速度太快！</p>
+    </div>
+  </section>
+
+  <!-- ── CORE 5 ──────────────────────────────────────────────────── -->
+  <section class="core-section" id="core5">
+    <div class="ch-header">
+      <div class="ch-num-block">Core 05</div>
+      <div class="ch-title-block">
+        <p class="ch-en">Fills & Ornamentation</p>
+        <h2>即興填補與旋律加花</h2>
+      </div>
+    </div>
+
+    <p>在流行鋼琴中，即興不是亂彈，而是基於「框架」的裝飾。以下四種技巧，教你如何填補旋律間的空白，讓音樂更有生命力。</p>
+
+    <div class="sh">技巧一：鄰音包圍 The Enclosure Technique</div>
+    <div class="technique-grid reveal">
+      <div class="tech-box">
+        <div class="tech-box-label">概念</div>
+        <div class="tech-box-body">不要直接彈奏和弦音，而是先彈它的「上方音」或「下方音」再回到目標音。這種微小的繞行會產生極強的轉調感與專業度。</div>
+      </div>
+      <div class="tech-box">
+        <div class="tech-box-label">實作範例</div>
+        <div class="tech-box-body">若目標音是 E（和弦的 3 度音），嘗試：
+          <div class="tech-formula">F → D♯ → E</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sh">技巧二：裝飾音與藍調滑音 Blue Slides</div>
+    <div class="technique-grid reveal">
+      <div class="tech-box">
+        <div class="tech-box-label">概念</div>
+        <div class="tech-box-body">將 ♭3 度音快速滑向 3 度音，或 ♭5 滑向 5。產生「騷靈 (Soulful)」或「福音 (Gospel)」的味道。</div>
+      </div>
+      <div class="tech-box">
+        <div class="tech-box-label">實作範例</div>
+        <div class="tech-box-body">彈奏大三和弦時，用食指輕彈黑鍵 E♭ 並迅速滑向白鍵 E：
+          <div class="tech-formula">E♭ ⟶ E（快速滑音）</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sh">技巧三：六度與十度雙音加花 6ths & 10ths</div>
+    <div class="tip-box reveal">
+      <div class="tip-box-title">🎵 核心原理</div>
+      <p>單手彈奏單旋律太單薄，利用固定音程增加厚度。右手在彈奏主旋律時，下方始終帶著一個 6 度音。若右手在 C 音，下方帶一個 E 音，平行移動——這是流行 Ballad 的靈魂。</p>
+    </div>
+
+    <div class="sh">技巧四：五聲群組 Pentatonic Clusters</div>
+    <div class="prog-card reveal">
+      <div class="prog-card-label">「流雲流水」技巧</div>
+      <div class="prog-card-chords" style="font-size:1.3rem;">C — D — E — G（1-2-3-5 群組）</div>
+      <div class="prog-card-desc">在 C 和弦下，快速上下跑動這四個音，不需考慮節拍，只要在下一個小節第一拍對準即可。</div>
+    </div>
+  </section>
+
+  <!-- ── CORE 6 ──────────────────────────────────────────────────── -->
+  <section class="core-section" id="core6">
+    <div class="ch-header">
+      <div class="ch-num-block">Core 06</div>
+      <div class="ch-title-block">
+        <p class="ch-en">Tone, Dynamics & Pedaling</p>
+        <h2>音色處理與踏板深度應用</h2>
+      </div>
+    </div>
+
+    <p>這部分是區分「愛好者」與「職業琴師」的關鍵。我們討論的是鋼琴的物理性質與聲音工程——如何讓你的聲音更有穿透力和質感。</p>
+
+    <div class="sh">1. 聲部平衡 Voicing & Finger Independence</div>
+    <table class="data-table reveal">
+      <thead><tr><th width="28%">原理</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="highlight">核心原理</span></td>
+          <td>鋼琴的最高音（Top Note）通常是旋律，需要突出。</td>
+        </tr>
+        <tr>
+          <td><span class="highlight">專業練習</span></td>
+          <td>彈奏右手四音和弦時，讓小指（5 指）力量最大，其餘（1,2,3 指）保持放鬆且音量減半。讓旋律像是在伴奏中「浮」出來一樣。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="sh">2. 重心轉移與手臂重量 Weight Transfer</div>
+    <p>流行鋼琴不需要「敲擊」，而是需要「沉入」。想像力量從肩膀流向手肘，最後落在指尖。彈奏抒情段落時，手指保持與琴鍵接觸，利用手臂重量緩慢下壓，音色會比單純用手指力敲出的更溫潤、更有穿透力。</p>
+
+    <div class="sh">3. 踏板深度應用 Advanced Pedaling</div>
+    <table class="data-table reveal">
+      <thead><tr><th>踏板技巧</th><th>方法</th><th>效果</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="highlight">切分踏板</span></td>
+          <td>在「換下一個和弦的手指按下後」的一瞬間，腳才快速更換踏板</td>
+          <td>聲音完全連貫且沒有雜音，是職業標準</td>
+        </tr>
+        <tr>
+          <td><span class="highlight">半踏板</span></td>
+          <td>段落轉換時不要完全放開踏板，放掉一半</td>
+          <td>保留共鳴同時清空低音混濁，產生夢幻模糊感</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="sh">4. 觸鍵速度與音色色彩</div>
+    <div class="technique-grid reveal">
+      <div class="tech-box">
+        <div class="tech-box-label">明亮音色 Bright Tone</div>
+        <div class="tech-box-body">
+          指尖垂直、快速擊鍵。<br>
+          <strong>適合：</strong>快節奏、Funk、流行搖滾
+        </div>
+      </div>
+      <div class="tech-box">
+        <div class="tech-box-label">柔軟音色 Warm Tone</div>
+        <div class="tech-box-body">
+          指腹接觸面加大、緩慢下壓。<br>
+          <strong>適合：</strong>前奏、感性抒情橋段
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box reveal">
+      <div class="tip-box-title">🎵 Jimbo 實驗</div>
+      <p>用「明亮」和「柔軟」兩種觸鍵方式彈同一個 C 大三和弦，錄音下來聽聽看。你會驚訝地發現，兩者出來的聲音情緒完全不同——這就是音色控制的力量。</p>
+    </div>
+  </section>
+
+  <!-- ── CORE 7 ──────────────────────────────────────────────────── -->
+  <section class="core-section" id="core7">
+    <div class="ch-header">
+      <div class="ch-num-block">Core 07</div>
+      <div class="ch-title-block">
+        <p class="ch-en">The 30-Day Blueprint</p>
+        <h2>30 天每日練習計劃</h2>
+      </div>
+    </div>
+
+    <p>進步不靠天份，靠的是每天的積累。即使每天只有 20–30 分鐘，一個月後你會驚訝地發現自己的成長。以下是為初學者量身打造的 30 天路線圖。</p>
+
+    <div class="sh">四週練習藍圖</div>
+    <div class="week-grid reveal">
+      <div class="week-card">
+        <div class="week-header">
+          <div class="week-num">W1</div>
+          <div class="week-meta">
+            <div class="week-label">Day 1–7</div>
+            <div class="week-theme">基礎週</div>
+          </div>
+        </div>
+        <div class="week-body">
+          <ul class="week-items">
+            <li>精通 12 個大三和弦與小三和弦</li>
+            <li>1-5-8 左手模式練習</li>
+            <li>基礎指型（原位 + 第一轉位）</li>
+          </ul>
+          <div class="week-goal">目標：12 個大調三和弦均能流暢彈奏</div>
+        </div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-header">
+          <div class="week-num">W2</div>
+          <div class="week-meta">
+            <div class="week-label">Day 8–14</div>
+            <div class="week-theme">進行週</div>
+          </div>
+        </div>
+        <div class="week-body">
+          <ul class="week-items">
+            <li>練習卡農進行與 4536 進行</li>
+            <li>I-V-vi-IV 在三個不同調性</li>
+            <li>加入 Sus2 / Sus4 色彩音</li>
+          </ul>
+          <div class="week-goal">目標：切換和弦進行時速度流暢，節奏穩定</div>
+        </div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-header">
+          <div class="week-num">W3</div>
+          <div class="week-meta">
+            <div class="week-label">Day 15–21</div>
+            <div class="week-theme">加花週</div>
+          </div>
+        </div>
+        <div class="week-body">
+          <ul class="week-items">
+            <li>加入 Add9 和弦</li>
+            <li>練習簡單的右手琶音</li>
+            <li>嘗試鄰音包圍技巧</li>
+          </ul>
+          <div class="week-goal">目標：左右手合奏一首歌的副歌，不停頓</div>
+        </div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-header">
+          <div class="week-num">W4</div>
+          <div class="week-meta">
+            <div class="week-label">Day 22–30</div>
+            <div class="week-theme">實戰週</div>
+          </div>
+        </div>
+        <div class="week-body">
+          <ul class="week-items">
+            <li>挑選一首你喜歡的歌</li>
+            <li>脫離簡譜，只看和弦級數即興</li>
+            <li>加入裝飾音和藍調滑音</li>
+          </ul>
+          <div class="week-goal">目標：彈出屬於你自己風格的版本</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sh">每日 30 分鐘黃金練習結構</div>
+    <div class="daily-grid reveal">
+      <div class="daily-cell">
+        <div class="daily-time">5'</div>
+        <div class="daily-label">熱身</div>
+        <div class="daily-desc">半音階 + 各調根音位置</div>
+      </div>
+      <div class="daily-cell">
+        <div class="daily-time">10'</div>
+        <div class="daily-label">本週重點</div>
+        <div class="daily-desc">根據週次目標專注練習</div>
+      </div>
+      <div class="daily-cell">
+        <div class="daily-time">10'</div>
+        <div class="daily-label">歌曲應用</div>
+        <div class="daily-desc">把技巧應用到選定歌曲</div>
+      </div>
+      <div class="daily-cell">
+        <div class="daily-time">5'</div>
+        <div class="daily-label">自由即興</div>
+        <div class="daily-desc">不帶壓力，享受音樂</div>
+      </div>
+    </div>
+
+    <div class="gold-quote reveal">「完美不是目標，進步才是。每天哪怕只練 15 分鐘，也比等有空再練強 100 倍。」</div>
+
+    <div class="tip-box reveal">
+      <div class="tip-box-title">✨ 最後一句話</div>
+      <p>一個月後回頭看，你會為自己的成長感到驚喜。選一首你真心喜歡的歌，從今天就開始吧！</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── CTA ─────────────────────────────────────────────────────────── -->
+<section class="cta-section no-print">
+  <div class="cta-inner">
+    <p class="cta-eyebrow">✦ 下一步 ✦</p>
+    <h2 class="cta-title">想要更深入學習<br>鋼琴即興嗎？</h2>
+    <p class="cta-desc">馬上瀏覽官網，報名 Jimbo Piano 專業線上即興課程，讓每一個人都能彈出屬於自己的音樂。</p>
+    <a href="https://www.jimbopiano.com/shop" class="cta-btn" target="_blank">立即報名課程 →</a>
+    <p class="cta-url">www.jimbopiano.com/shop</p>
+  </div>
+</section>
+
+<footer class="footer-strip no-print">
+  © Jimbo Piano &nbsp;|&nbsp; <a href="https://www.jimbopiano.com">jimbopiano.com</a> &nbsp;|&nbsp; 免費學習資源，請勿商業轉載
+</footer>
+
+<button class="back-top no-print" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// Nav scroll effect
+const nav = document.getElementById('nav');
+const backTop = document.getElementById('backTop');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+  backTop.classList.toggle('show', window.scrollY > 400);
+});
+
+// Scroll reveal
+const revealEls = document.querySelectorAll('.reveal, .core-section');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 60);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+revealEls.forEach(el => observer.observe(el));
+
+// Piano key hover shimmer
+document.querySelectorAll('.wkey').forEach(k => {
+  k.addEventListener('mouseenter', () => {
+    k.style.background = 'linear-gradient(180deg, #fff 0%, #f0eee8 100%)';
+  });
+  k.addEventListener('mouseleave', () => {
+    k.style.background = 'white';
+  });
+});
+</script>
+</body>
+</html>
